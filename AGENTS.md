@@ -7,8 +7,8 @@
 ## Repository Purpose
 
 This repository is the **summary, version control, and governance** point for all the
-Codex-automation scripts used across embedded (IAR) projects. The scripts themselves
-are categorized into the following top-level folders:
+Codex-automation scripts used across embedded (IAR) and other projects. The scripts
+themselves are organized into the following top-level folders:
 
 | Folder | Purpose |
 |---|---|
@@ -18,15 +18,19 @@ are categorized into the following top-level folders:
 | `04_File_Watcher/` | PowerShell scripts that auto-build on file save |
 | `05_Documentation/` | `AGENTS.md` templates, prompt library, fill-in checklist |
 | `06_Project_Examples/` | A working example showing all scripts in action (YTM32B1MD1 FlexCAN) |
-| `07_Tracking/` | `TODO.md`, `IMPROVEMENTS.md`, change log (see Tracking section below) |
+| `_tracking/` | `TODO.md`, `IMPROVEMENTS.md`, `CHANGELOG.md` (the underscore prefix marks it as meta, not a script) |
+
+> **For how the repository is organized and how to add new scripts/categories, see
+> [`_REPOSITORY_STRUCTURE.md`](_REPOSITORY_STRUCTURE.md).** That file is the source of
+> truth for "where do I put this new script?" questions.
 
 ## Tracking (read this first)
 
-- **`07_Tracking/TODO.md`** -- pending tasks, ordered by priority
-- **`07_Tracking/IMPROVEMENTS.md`** -- ideas for future enhancements
-- **`07_Tracking/CHANGELOG.md`** -- dated log of what changed in this repo
+- **`_tracking/TODO.md`** -- pending tasks, ordered by priority
+- **`_tracking/IMPROVEMENTS.md`** -- ideas for future enhancements
+- **`_tracking/CHANGELOG.md`** -- dated log of what changed in this repo
 
-Before adding a new script, **check TODO.md and IMPROVEMENTS.md** to see if it's already
+Before adding a new script, **check TODO.md and IMPROVEMENTS.md** to see if it''s already
 planned. When you finish a task, **move it from TODO.md to CHANGELOG.md**.
 
 ## Universal Script Rules (apply to ALL scripts in this repo)
@@ -48,7 +52,7 @@ These rules are non-negotiable. They were learned from real bugs during developm
 
 - Use `goto :LABEL` + a **single** `exit /b` at the end. Do NOT use `exit /b`
   inside `if () (...)` blocks. Reason: chcp 65001 + nested `if` + `exit` causes
-  parser errors like `'. was unexpected at this time.'`.
+  parser errors like `''. was unexpected at this time.''`.
 - All scripts that read configuration MUST load it from `project.env.bat` via
   `call "%~dp0lib\common.bat"`. Reason: `call project.env` (without `.bat`) silently
   does nothing because cmd only executes files with `.bat`/`.cmd` extensions.
@@ -59,26 +63,25 @@ These rules are non-negotiable. They were learned from real bugs during developm
 ### 3. Shell Tooling Quirks
 
 These are cmd / PowerShell quirks we hit during development. The fixes are baked
-into the scripts already -- don't reintroduce the old patterns.
+into the scripts already -- don''t reintroduce the old patterns.
 
 - **Never** use `for %%F in (...)` with `%%~pF` (path-only expansion). It strips
   the drive letter, breaking any `if` path comparisons. Use **explicit file lists**
   with variables (see `update_scripts.bat` for the pattern).
 - **Never** use `fc /B ... >nul 2>&1` followed by `if errorlevel 1` inside a
-  `for (...)` block. The errorlevel doesn't propagate reliably. Use a PowerShell
+  `for (...)` block. The errorlevel doesn''t propagate reliably. Use a PowerShell
   helper (`compare_hash.ps1`) and capture output via a temp file.
 - **Never** use `for /f "usebackq"` with `powershell` inside the backticks. The
   sub-cmd shell does not inherit PATH and produces
   `The system cannot find the file powershell.` errors. Use a plain
   `powershell ... > tmp.txt` invocation and read the temp file with `set /p`.
 - **Never** use `wmic` to get timestamps. Win10 22H2+ deprecated it and it
-  intermittently returns empty strings. Use `powershell -Command "(Get-Date).ToString('...')"`
-  instead.
-- **Never** use `Get-FileHash` directly in scripts. It's missing in some
+  intermittently returns empty strings. Use `powershell -Command "(Get-Date).ToString(''...'')"` instead.
+- **Never** use `Get-FileHash` directly in scripts. It''s missing in some
   PowerShell 5.1 environments. Use the .NET
   `[System.Security.Cryptography.SHA256]` class directly.
 - **Never** use `sub-routine :label` (`call :label`) inside a `for (...)` block.
-  cmd's parser can't find the label. Inline the logic instead.
+  cmd''s parser can''t find the label. Inline the logic instead.
 
 ### 4. Codex Integration
 
@@ -102,13 +105,6 @@ into the scripts already -- don't reintroduce the old patterns.
 - **Always** have a dry-run mode (default) and an `--apply` flag.
 - **Never** delete files that exist in the project but not in the template.
 
-## Versioning
-
-This repository follows a simple "date + version" scheme:
-- New file: copy with current date in commit message
-- Bug fix to existing file: edit in place, log in CHANGELOG.md
-- Breaking change: bump the script's major version (see per-script AGENTS.md)
-
 ## Per-script AGENTS.md convention
 
 Each script directory MUST contain its own `AGENTS.md` with:
@@ -116,24 +112,26 @@ Each script directory MUST contain its own `AGENTS.md` with:
 2. **How to call it** -- exact command syntax, with examples
 3. **Inputs / outputs** -- what files it reads/writes
 4. **Dependencies** -- which other scripts/helpers it calls
-5. **Known issues** -- what doesn't work yet, and workarounds
-6. **Future work** -- what's planned but not done
+5. **Known issues** -- what doesn''t work yet, and workarounds
+6. **Future work** -- what''s planned but not done
 
 The root `AGENTS.md` (this file) is the rulebook. Per-script `AGENTS.md` is the
 manual page. Read both.
 
-## How to contribute a new script
+## How to add a new script (summary)
 
-1. **Plan it**: open an issue in GitHub, or add an entry to `07_Tracking/TODO.md`
-2. **Decide category**: which top-level folder does it belong in?
-3. **Write the script** following all the rules above
-4. **Add `AGENTS.md`** in the script's directory following the convention above
-5. **Add a row** to `07_Tracking/CHANGELOG.md` (dated)
+For full details, see [`_REPOSITORY_STRUCTURE.md`](_REPOSITORY_STRUCTURE.md).
+
+1. **Plan it**: open an issue in GitHub, or add an entry to `_tracking/TODO.md`
+2. **Decide category**: which top-level folder does it belong in? (See table above.)
+3. **Write the script** following all the rules in this file
+4. **Add `AGENTS.md`** in the script''s directory following the convention above
+5. **Add a row** to `_tracking/CHANGELOG.md` (dated)
 6. **If it changes the bootstrap** (new file copied by `new_project.bat`):
    - Update `02_Template_Management/new_project_bat/new_project.bat`
    - Update `02_Template_Management/update_scripts_bat/update_scripts.bat` to
      add the new file to the explicit sync list
-7. **Commit + push** to `git@github.com:CC-GIT-MAX/Automated_Script.git`
+7. **Commit + push** to the remote
 
 ## Git workflow
 
@@ -144,22 +142,25 @@ git push origin main
 ```
 
 Before committing, ALWAYS:
-- Run `.scripts\build.bat build` if the change touches any per-project script
+- Run a smoke test if the change touches any per-project script
 - Check `git diff` to verify only intended files changed
-- Update `07_Tracking/CHANGELOG.md`
+- Update `_tracking/CHANGELOG.md`
 
 ## Pointers
 
-- `README.md` -- user-facing quick start
-- `05_Documentation/README_md/README.md` -- the canonical README for the template
-- `05_Documentation/AGENTS_md/AGENTS.md` -- the per-project AGENTS.md template
-- `05_Documentation/codex_prompt_library/codex_prompt_library.md` -- all Codex
+- **`_REPOSITORY_STRUCTURE.md`** -- how the repo is organized, how to add new scripts
+- **`README.md`** -- user-facing quick start
+- **`MANIFEST.md`** -- file index
+- **`05_Documentation/05_Documentation_AGENTS.md`** -- docs folder overview
+- **`05_Documentation/README_md/README.md`** -- the canonical README for the template
+- **`05_Documentation/AGENTS_md/AGENTS.md`** -- the per-project AGENTS.md template
+- **`05_Documentation/codex_prompt_library/codex_prompt_library.md`** -- all Codex
   prompts we use
-- `05_Documentation/fill_in_checklist/AGENTS_FILL_IN_CHECKLIST.md` -- checklist
+- **`05_Documentation/fill_in_checklist/AGENTS_FILL_IN_CHECKLIST.md`** -- checklist
   for filling in `project.env.bat` and `AGENTS.md` placeholders
-- `07_Tracking/TODO.md` -- pending tasks
-- `07_Tracking/IMPROVEMENTS.md` -- future enhancements
-- `07_Tracking/CHANGELOG.md` -- change history
+- **`_tracking/TODO.md`** -- pending tasks
+- **`_tracking/IMPROVEMENTS.md`** -- future enhancements
+- **`_tracking/CHANGELOG.md`** -- change history
 
 ---
 

@@ -9,8 +9,9 @@
 |---|---|
 | `AGENTS.md` | Master rulebook (universal rules, contribution guide) |
 | `README.md` | Top-level intro and quick links |
-| `.gitignore` | Files to exclude from git |
+| `_REPOSITORY_STRUCTURE.md` | How the repo is organized, how to add new scripts |
 | `MANIFEST.md` | This file |
+| `.gitignore` | Files to exclude from git |
 
 ## 01_Build_Automation/
 
@@ -68,7 +69,7 @@
 | `YTM32B1MD1_FlexCAN/project.env.bat` | Example project''s env config |
 | `YTM32B1MD1_FlexCAN/lib/common.bat` | Example project''s common.bat |
 
-## 07_Tracking/
+## _tracking/ (was 07_Tracking)
 
 | File | Purpose |
 |---|---|
@@ -76,6 +77,9 @@
 | `TODO.md` | Pending tasks (priority-ordered) |
 | `IMPROVEMENTS.md` | Future ideas |
 | `CHANGELOG.md` | Dated change log |
+
+> **Note**: `07_Tracking/` was renamed to `_tracking/` on 2026-07-13 to follow the
+> convention that meta files (not scripts) are prefixed with underscore.
 
 ## Total file counts
 
