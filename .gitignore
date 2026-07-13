@@ -1,0 +1,22 @@
+﻿# Build artifacts
+build_logs/
+*.log
+
+# Backups
+.scripts/backup/
+backup/
+
+# Editor / OS noise
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Per-project config (paths, secrets)
+project.env.bat
+
+# Local cache
+.cache/
+__pycache__/
+*.pyc
