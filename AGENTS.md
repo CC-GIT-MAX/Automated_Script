@@ -1,4 +1,4 @@
-﻿# AGENTS.md -- Automated Script Summary (ROOT)
+# AGENTS.md -- Automated Script Summary (ROOT)
 
 > This file is the **master** set of rules for all scripts in this repository.
 > Each script subdirectory has its **own** `AGENTS.md` with rules specific to that script.
@@ -29,6 +29,7 @@ themselves are organized into the following top-level folders:
 - **`_tracking/TODO.md`** -- pending tasks, ordered by priority
 - **`_tracking/IMPROVEMENTS.md`** -- ideas for future enhancements
 - **`_tracking/CHANGELOG.md`** -- dated log of what changed in this repo
+- **`_tracking/PITFALLS.md`** -- known failures and mandatory prevention rules
 
 Before adding a new script, **check TODO.md and IMPROVEMENTS.md** to see if it''s already
 planned. When you finish a task, **move it from TODO.md to CHANGELOG.md**.
@@ -161,8 +162,9 @@ Before committing, ALWAYS:
 - **`_tracking/TODO.md`** -- pending tasks
 - **`_tracking/IMPROVEMENTS.md`** -- future enhancements
 - **`_tracking/CHANGELOG.md`** -- change history
+- **`_tracking/PITFALLS.md`** -- mandatory lessons learned before script changes
 
 ---
 
-**Last updated**: 2026-07-13
+**Last updated**: 2026-07-14
 **Maintainer**: see git log

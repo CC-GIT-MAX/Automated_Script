@@ -1,4 +1,4 @@
-# AGENTS.md -- update_scripts.bat
+﻿# AGENTS.md -- update_scripts.bat
 
 ## What it does
 
@@ -37,6 +37,11 @@ Must be run from the **target project''s root directory** (uses `%CD%`).
 | `build.bat` | `.scripts\build.bat` |
 | `fix_build.bat` | `.scripts\fix_build.bat` |
 | `lib\common.bat` | `.scripts\lib\common.bat` |
+| `daily_report_bat\daily_report.bat` | `.scripts\daily_report.bat` |
+| `weekly_report_bat\weekly_report.bat` | `.scripts\weekly_report.bat` |
+| `weekly_report_bat\weekly_report.ps1` | `.scripts\weekly_report.ps1` |
+| `monthly_report_bat\monthly_report.bat` | `.scripts\monthly_report.bat` |
+| `monthly_report_bat\monthly_report.ps1` | `.scripts\monthly_report.ps1` |
 
 ## Files PRESERVED (never touched)
 
@@ -53,16 +58,17 @@ We do NOT scan the template directory because:
 
 ## Adding a new file to the sync list
 
-Open this script and find the three paired sections:
+Open this script and find the four paired sections:
 1. Variable definitions: `set "FILE_NEW_SRC=..."` and `set "FILE_NEW_DST=..."`
 2. Scan phase: `call :CHECK_ONE "%FILE_NEW_SRC%" "%FILE_NEW_DST%" "new.bat"`
 3. Apply phase: `call :APPLY_ONE "%FILE_NEW_SRC%" "%FILE_NEW_DST%" "new.bat"`
 4. Backup phase: add an `if exist ... copy /Y ...` line
+5. Update this AGENTS.md `Files managed` table
 
 ## Known issues
 
 - Hash comparison uses a PowerShell helper (`lib\compare_hash.ps1`) which adds
-  startup latency (~200ms per file). Acceptable for ~3 files.
+  startup latency (~200ms per file). Acceptable for ~8 files.
 - The `--no-backup` flag is dangerous in production. Use only in CI.
 
 ## Future work

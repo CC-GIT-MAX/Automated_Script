@@ -41,8 +41,8 @@ In the new project:
 
 ## Dependencies
 
-- `template\build.bat`, `fix_build.bat`, `lib\`, `update.bat`, `AGENTS.md`
-- `template\project.env.bat.example`
+- Categorized repository sources under `01_Build_Automation`, `02_Template_Management`, `03_Helper_Libraries`, `04_File_Watcher`, and `05_Documentation`
+- `06_Project_Examples/YTM32B1MD1_FlexCAN/project.env.bat` as the starter configuration
 
 ## What it does NOT do
 

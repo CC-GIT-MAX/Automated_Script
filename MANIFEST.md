@@ -1,4 +1,4 @@
-﻿# MANIFEST.md -- Complete file index
+# MANIFEST.md -- Complete file index
 
 > Auto-generated index of every file in this repo. Use it as a quick reference
 > when you need to find a specific file.
@@ -87,3 +87,18 @@
 - AGENTS.md files: 13 (1 root + 8 per-script + 3 category + 1 doc)
 - Documentation: 4 (README, AGENTS template, prompt library, fill-in checklist)
 - Tracking: 3 (TODO, IMPROVEMENTS, CHANGELOG)
+## Operation Guides
+
+| File | Purpose |
+|---|---|
+| `05_Documentation/operation_guides/README.md` | Chinese user entry point and recommended workflow |
+| `05_Documentation/operation_guides/01-new-project.md` | Bootstrap a new project |
+| `05_Documentation/operation_guides/02-project-config.md` | Configure `project.env.bat` |
+| `05_Documentation/operation_guides/03-build.md` | Run IAR builds |
+| `05_Documentation/operation_guides/04-fix-build.md` | Run the Codex compile-fix loop |
+| `05_Documentation/operation_guides/05-daily-report.md` | Create daily reports |
+| `05_Documentation/operation_guides/06-weekly-report.md` | Generate weekly reports |
+| `05_Documentation/operation_guides/07-monthly-report.md` | Generate monthly reports |
+| `05_Documentation/operation_guides/08-update-scripts.md` | Preview, apply, and roll back script updates |
+| `05_Documentation/operation_guides/09-auto-build-watcher.md` | Start save-triggered builds |
+| `05_Documentation/operation_guides/10-helper-scripts.md` | Understand internal helpers and companion scripts |

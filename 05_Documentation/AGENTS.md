@@ -8,6 +8,7 @@ This folder contains all the **documentation** that ships with the template.
 | `README_md/` | The main user-facing README | When workflow changes |
 | `codex_prompt_library/` | All Codex prompts we use (compile-fix, code review, etc.) | When adding a new prompt |
 | `fill_in_checklist/` | The P0/P1/P2/P3 checklist for filling in `project.env.bat` and `AGENTS.md` | When new required fields are added |
+| `operation_guides/` | Detailed Chinese operating procedures for every script | Whenever syntax, behavior, paths, or troubleshooting changes |
 
 ## How documentation is versioned
 
@@ -24,3 +25,4 @@ The CHANGELOG.md should mention the doc update.
   embedded in scripts that use them.
 - `AGENTS_FILL_IN_CHECKLIST.md` is a one-time aid when setting up a new
   project.
+- `operation_guides/README.md` is the primary user entry point for running scripts.

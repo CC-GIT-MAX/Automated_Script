@@ -1,4 +1,4 @@
-﻿# Automated Script Summary
+# Automated Script Summary
 
 Centralized, version-controlled home for the Codex-automation scripts used
 across embedded (IAR) and other projects.
@@ -11,6 +11,7 @@ across embedded (IAR) and other projects.
 - **[_tracking/IMPROVEMENTS.md](_tracking/IMPROVEMENTS.md)** -- future ideas
 - **[_tracking/CHANGELOG.md](_tracking/CHANGELOG.md)** -- history
 - **[MANIFEST.md](MANIFEST.md)** -- file index
+- **[操作手册](05_Documentation/operation_guides/README.md)** -- 每个脚本的详细步骤、参数和排错方法
 
 ## What''s in here
 
