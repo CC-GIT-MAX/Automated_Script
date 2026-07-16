@@ -1,4 +1,4 @@
-# AGENTS.md 填空清单
+﻿# AGENTS.md 填空清单
 
 > 这份清单按"先做哪一步、改哪一行"排序，配套文件是 `outputs/AGENTS.md`。
 > 当前文件状态：MCU 平台 `YTM32B1MD14`、烧录工具 `J-Link` 已填好；其余关键字段仍需补充。

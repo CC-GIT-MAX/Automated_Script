@@ -239,3 +239,23 @@ I want to add documentation (AGENTS.md, README, etc.). Where does it go?
 ---
 
 **Last updated**: 2026-07-13
+## 12. Per-script dependency bundles
+
+Every script folder's `AGENTS.md` MUST include a **Dependency manifest**
+section and end with a **Transplant checklist**. The matching Chinese guide
+under `05_Documentation/operation_guides/` MUST include a **依赖文件清单与移植**
+section with copy commands and verification steps.
+
+Full rule: see root `AGENTS.md`, section
+`### 6. Dependency Packaging (self-contained script bundles)`.
+
+When you add a new script:
+
+- Derive the dependency list from the script source (`call`,
+  `powershell -File`, `copy`, `%FILE_*_SRC%` references). No hypotheticals.
+- The manifest must list the **runtime on-disk layout**, not the source-tree
+  layout. Example: a `.bat` + `.ps1` companion pair live side-by-side at
+  runtime, even though they sit in the same folder here.
+- If `new_project.bat` or `update_scripts.bat` does not copy a file the
+  manifest lists, that is a **bug** in those scripts -- fix the bug, do not
+  drop the entry from the manifest.

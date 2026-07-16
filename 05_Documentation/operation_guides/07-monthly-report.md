@@ -1,4 +1,4 @@
-# 月报：monthly_report.bat / monthly_report.ps1
+﻿# 月报：monthly_report.bat / monthly_report.ps1
 
 ## 用途
 
@@ -41,3 +41,43 @@
 - 日报数量为 0：检查 `.scripts\reports\daily` 中的日期。
 - Codex 汇总内容不准确：先修正日报原始信息，再重新生成；源数据质量决定汇总质量。
 - 不要直接修改 `monthly_report.ps1` 的生成提示，除非同时更新脚本规范和本指南。
+
+## 依赖文件清单与移植
+
+`monthly_report.bat` 与伴生 PowerShell 脚本 `monthly_report.ps1` 必须放在同一目录。
+
+### 复制位置与目标
+
+| 仓库内源文件 | 目标项目中的部署路径 |
+|---|---|
+| `02_Template_Management\monthly_report_bat\monthly_report.bat` | `.scripts\monthly_report.bat` |
+| `02_Template_Management\monthly_report_bat\monthly_report.ps1` | `.scripts\monthly_report.ps1` |
+| `03_Helper_Libraries\common_bat\common.bat` | `.scripts\lib\common.bat` |
+| `06_Project_Examples\YTM32B1MD1_FlexCAN\project.env.bat` | `.scripts\project.env.bat` |
+| 输入数据 | `.scripts\reports\daily\*.md` 与 `.scripts\reports\weekly\*.md` |
+
+### 一次性移植命令
+
+```bat
+mkdir .scripts\lib 2>nul
+copy /Y "D:\working_file\WorkSpace\scripts\Automated_Script_Summary\02_Template_Management\monthly_report_bat\monthly_report.bat" .scripts\monthly_report.bat
+copy /Y "D:\working_file\WorkSpace\scripts\Automated_Script_Summary\02_Template_Management\monthly_report_bat\monthly_report.ps1" .scripts\monthly_report.ps1
+copy /Y "D:\working_file\WorkSpace\scripts\Automated_Script_Summary\03_Helper_Libraries\common_bat\common.bat" .scripts\lib\common.bat
+copy /Y "D:\working_file\WorkSpace\scripts\Automated_Script_Summary\06_Project_Examples\YTM32B1MD1_FlexCAN\project.env.bat" .scripts\project.env.bat
+```
+
+### 移植后验证
+
+```bat
+test -f .scripts\monthly_report.bat               REM 批处理入口存在
+test -f .scripts\monthly_report.ps1               REM PowerShell 伴生脚本与 .bat 同目录
+test -f .scripts\lib\common.bat                  REM 环境加载器存在
+test -f .scripts\project.env.bat                 REM 配置存在
+.scripts\monthly_report --no-codex 2026-07       REM 月份参数可用
+.scripts\monthly_report --no-codex --from 2026-07-01 --to 2026-07-31   REM 显式区间可用
+.scripts\monthly_report --no-codex               REM 默认当月可用
+dir .scripts\reports\monthly                     REM 输出文件存在
+```
+
+外部工具：PowerShell 5.1+、`codex` CLI（除非使用 `--no-codex`）。
+

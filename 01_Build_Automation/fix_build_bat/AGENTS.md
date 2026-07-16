@@ -84,3 +84,49 @@ constraints, e.g.:
 - Add `--dry-run` mode that asks Codex for a fix plan but does not apply it
 - Add `--show-diff` that prints the diff even on success
 - Add metric logging: how many attempts per fix, success rate over time
+## Dependency manifest (transplant this script by copying)
+
+To use `fix_build.bat` in a new project, reproduce this on-disk layout and copy
+the files below. `fix_build.bat` is **only useful once `build.bat` already
+works** -- it inherits every dependency of `build.bat` plus the Codex CLI.
+
+| Slot | Source in this repo | Runtime path in target project |
+|---|---|---|
+| Entry script | `01_Build_Automation/fix_build_bat/fix_build.bat` | `<PROJECT_ROOT>\.scripts\fix_build.bat` |
+| Calls `build.bat` (REQUIRED) | `01_Build_Automation/build_bat/build.bat` | `<PROJECT_ROOT>\.scripts\build.bat` |
+| Env loader (REQUIRED) | `03_Helper_Libraries/common_bat/common.bat` | `<PROJECT_ROOT>\.scripts\lib\common.bat` |
+| Project config (REQUIRED) | `06_Project_Examples/YTM32B1MD1_FlexCAN/project.env.bat` | `<PROJECT_ROOT>\.scripts\project.env.bat` |
+
+**External tool dependencies**
+
+| Tool | Version / how to verify | Used for |
+|---|---|---|
+| `codex` CLI | `where codex` resolves; see `https://github.com/openai/codex` | Reads log, proposes source edits |
+| PowerShell | 5.1+ (default on Windows) | Used by `build.bat` for timestamps |
+| `cmd.exe` | Windows default | Script host |
+
+**Transplant command (cmd, run from the new project root)**
+
+```bat
+mkdir .scripts\lib 2>nul
+copy /Y "D:\working_file\WorkSpace\scripts\Automated_Script_Summary\01_Build_Automation\fix_build_bat\fix_build.bat"  .scripts\fix_build.bat
+copy /Y "D:\working_file\WorkSpace\scripts\Automated_Script_Summary\01_Build_Automation\build_bat\build.bat"        .scripts\build.bat
+copy /Y "D:\working_file\WorkSpace\scripts\Automated_Script_Summary\03_Helper_Libraries\common_bat\common.bat"      .scripts\lib\common.bat
+copy /Y "D:\working_file\WorkSpace\scripts\Automated_Script_Summary\06_Project_Examples\YTM32B1MD1_FlexCAN\project.env.bat" .scripts\project.env.bat
+```
+
+## Transplant checklist
+
+```bat
+where codex                          REM Codex CLI must be on PATH
+test -f .scripts\fix_build.bat       REM entry script exists
+test -f .scripts\build.bat           REM build.bat (transitively called) exists
+test -f .scripts\lib\common.bat      REM helper exists
+test -f .scripts\project.env.bat     REM config exists
+.scripts\build.bat build             REM baseline build must succeed
+.scripts\fix_build.bat 1             REM one Codex round-trip; verify exit 0 or inspect git diff
+git status --short                   REM review Codex's edits before continuing
+```
+
+See also: `build.bat` (called every retry), `common.bat` (env loader),
+`auto_build_watcher.ps1` (optionally invokes this script).

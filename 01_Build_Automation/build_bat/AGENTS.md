@@ -49,3 +49,47 @@ Reads `.scripts\project.env.bat` for:
 - Add GCC ARM toolchain support (replace `iarbuild` invocation, keep env pattern).
 - Add a `--quiet` flag to suppress the script banner.
 - Add colored output (green=OK, red=FAIL) via ANSI escape codes.
+## Dependency manifest (transplant this script by copying)
+
+To use `build.bat` in a new project, reproduce this on-disk layout and copy the
+files below. After copying, run the **Transplant checklist** at the bottom.
+
+| Slot | Source in this repo | Runtime path in target project |
+|---|---|---|
+| Entry script | `01_Build_Automation/build_bat/build.bat` | `<PROJECT_ROOT>\.scripts\build.bat` |
+| Env loader (REQUIRED) | `03_Helper_Libraries/common_bat/common.bat` | `<PROJECT_ROOT>\.scripts\lib\common.bat` |
+| Project config (per-project, gitignored) | `06_Project_Examples/YTM32B1MD1_FlexCAN/project.env.bat` (template only) | `<PROJECT_ROOT>\.scripts\project.env.bat` |
+
+**External tool dependencies**
+
+| Tool | Version / how to verify | Used for |
+|---|---|---|
+| `iarbuild.exe` | Path set in `IAR_BIN` of `project.env.bat` | Compile the IAR project |
+| PowerShell | `powershell.exe` 5.1+ on Windows (default) | ASCII timestamp generation |
+| `cmd.exe` | Windows default | Script host |
+
+**Transplant command (cmd, run from the new project root)**
+
+```bat
+mkdir .scripts\lib 2>nul
+copy /Y "D:\working_file\WorkSpace\scripts\Automated_Script_Summary\01_Build_Automation\build_bat\build.bat"        .scripts\build.bat
+copy /Y "D:\working_file\WorkSpace\scripts\Automated_Script_Summary\03_Helper_Libraries\common_bat\common.bat"      .scripts\lib\common.bat
+copy /Y "D:\working_file\WorkSpace\scripts\Automated_Script_Summary\06_Project_Examples\YTM32B1MD1_FlexCAN\project.env.bat" .scripts\project.env.bat
+```
+
+Then edit `.scripts\project.env.bat` to fill in `IAR_BIN`, `IAR_PROJECT_SUBPATH`,
+`IAR_PROJECT_FILE`, `IAR_CONFIG`, `PROJECT_NAME`, `MCU_FAMILY`.
+
+## Transplant checklist
+
+```bat
+test -f .scripts\build.bat          REM entry script exists
+test -f .scripts\lib\common.bat     REM helper exists
+test -f .scripts\project.env.bat    REM config exists
+type .scripts\project.env.bat       REM confirm IAR_BIN points to a real iarbuild.exe
+.scripts\build.bat build            REM exit code MUST be 0
+.scripts\build.bat clean            REM exit code MUST be 0
+dir .scripts\build_logs             REM log dir was created
+```
+
+See also: `fix_build.bat` (calls this script), `common.bat` (helper loaded by this script).

@@ -1,4 +1,4 @@
-# MANIFEST.md -- Complete file index
+﻿# MANIFEST.md -- Complete file index
 
 > Auto-generated index of every file in this repo. Use it as a quick reference
 > when you need to find a specific file.
@@ -102,3 +102,10 @@
 | `05_Documentation/operation_guides/08-update-scripts.md` | Preview, apply, and roll back script updates |
 | `05_Documentation/operation_guides/09-auto-build-watcher.md` | Start save-triggered builds |
 | `05_Documentation/operation_guides/10-helper-scripts.md` | Understand internal helpers and companion scripts |
+
+## Per-script dependency manifests
+
+Every per-script `AGENTS.md` and every entry in `05_Documentation/operation_guides/`
+contains a "Dependency manifest" / "依赖文件清单与移植" section listing the
+files to copy and the verification steps. See the root `AGENTS.md`,
+section `### 6. Dependency Packaging`, for the rule.

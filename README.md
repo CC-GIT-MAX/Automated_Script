@@ -1,4 +1,4 @@
-# Automated Script Summary
+﻿# Automated Script Summary
 
 Centralized, version-controlled home for the Codex-automation scripts used
 across embedded (IAR) and other projects.
@@ -79,3 +79,14 @@ Before pushing, check:
 - **Remote**: `git@github.com-personal:CC-GIT-MAX/Automated_Script.git`
 - **Local path**: `D:\working_file\WorkSpace\scripts\Automated_Script_Summary`
 - **Created**: 2026-07-13
+
+## Per-script dependency bundles
+
+Every script ships with an explicit dependency manifest in its per-script
+`AGENTS.md` and a Chinese "依赖文件清单与移植" section in the matching
+`05_Documentation/operation_guides/*.md` entry. To use **one** script in a
+project, copy only the files listed in those sections; to use the whole suite,
+copy the repo (`Copy-Item -Recurse`) or run `new_project.bat`.
+
+The rule is defined in the root `AGENTS.md`, section
+`### 6. Dependency Packaging (self-contained script bundles)`.

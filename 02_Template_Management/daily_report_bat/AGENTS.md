@@ -1,4 +1,4 @@
-﻿# AGENTS.md -- daily_report.bat
+# AGENTS.md -- daily_report.bat
 
 ## What it does
 
@@ -70,3 +70,46 @@ look for `## Done`, `## In Progress`, `## Blocked / Risks`,
 - Hook into the `auto_build_watcher.ps1` to stamp the report when a build
   passes / fails
 - Add `--interactive` mode that prompts for each section
+## Dependency manifest (transplant this script by copying)
+
+To use `daily_report.bat` in a new project, copy the files below. It is a
+self-contained pure-batch script and has no `.ps1` companion.
+
+| Slot | Source in this repo | Runtime path in target project |
+|---|---|---|
+| Entry script | `02_Template_Management/daily_report_bat/daily_report.bat` | `<PROJECT_ROOT>\.scripts\daily_report.bat` |
+| Env loader (REQUIRED) | `03_Helper_Libraries/common_bat/common.bat` | `<PROJECT_ROOT>\.scripts\lib\common.bat` |
+| Project config (REQUIRED) | `06_Project_Examples/YTM32B1MD1_FlexCAN/project.env.bat` | `<PROJECT_ROOT>\.scripts\project.env.bat` |
+
+**External tool dependencies**
+
+| Tool | Version / how to verify | Used for |
+|---|---|---|
+| PowerShell | 5.1+ (default on Windows) | Date validation regex and today() |
+| `cmd.exe` | Windows default | Script host |
+| Default text editor | Notepad (or any editor set as default) | Opens the report after creation |
+
+**Transplant command (cmd, run from the new project root)**
+
+```bat
+mkdir .scripts\lib 2>nul
+copy /Y "D:\working_file\WorkSpace\scripts\Automated_Script_Summary\02_Template_Management\daily_report_bat\daily_report.bat" .scripts\daily_report.bat
+copy /Y "D:\working_file\WorkSpace\scripts\Automated_Script_Summary\03_Helper_Libraries\common_bat\common.bat"                 .scripts\lib\common.bat
+copy /Y "D:\working_file\WorkSpace\scripts\Automated_Script_Summary\06_Project_Examples\YTM32B1MD1_FlexCAN\project.env.bat"   .scripts\project.env.bat
+```
+
+## Transplant checklist
+
+```bat
+test -f .scripts\daily_report.bat    REM entry script exists
+test -f .scripts\lib\common.bat      REM env loader exists
+test -f .scripts\project.env.bat     REM project identity vars are set
+.scripts\daily_report                REM creates .scripts\reports\daily\<today>.md
+.scripts\daily_report 2026-07-15     REM explicit date works
+.scripts\daily_report --regen        REM overwrite flag works
+.scripts\daily_report --append "smoke-test entry"   REM append flag works
+dir .scripts\reports\daily           REM at least one .md file present
+```
+
+See also: `common.bat` (env loader), `weekly_report.bat` + `weekly_report.ps1`
+(reads the dailies produced here), `monthly_report.bat` + `monthly_report.ps1`.

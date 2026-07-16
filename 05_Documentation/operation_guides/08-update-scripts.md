@@ -1,4 +1,4 @@
-# 更新与回滚：update_scripts.bat / update.bat
+﻿# 更新与回滚：update_scripts.bat / update.bat
 
 ## 用途
 
@@ -56,3 +56,45 @@ Copy-Item ".\.scripts\backup\20260714_003846\weekly_report.ps1" ".\.scripts\week
 - `Template incomplete`：共享仓库不完整或脚本位置改变。
 - `.scripts not found`：先运行新项目初始化。
 - 更新后行为异常：从最新备份恢复，并在共享仓库查看 `CHANGELOG.md`。
+
+## 依赖文件清单与移植
+
+`update_scripts.bat` 与 `update.bat` 共同构成“共享仓库 → 项目内 .scripts\”同步链路。
+
+### 复制位置与目标
+
+| 仓库内源文件 | 部署位置 |
+|---|---|
+| `02_Template_Management\update_scripts_bat\update_scripts.bat` | 共享仓库目录 `<TEMPLATE_DIR>\update_scripts.bat` |
+| `03_Helper_Libraries\compare_hash_ps1\compare_hash.ps1` | 共享仓库目录 `<TEMPLATE_DIR>\..\..\03_Helper_Libraries\compare_hash_ps1\compare_hash.ps1`（脚本使用相对路径定位，不能平铺） |
+| `02_Template_Management\update_bat\update.bat` | 项目内 `.scripts\update.bat` |
+
+### 一次性移植整个共享仓库
+
+```powershell
+Copy-Item -Path "D:\working_file\WorkSpace\scripts\Automated_Script_Summary" `
+          -Destination "D:\new-shared-template\" -Recurse -Force
+```
+
+只搬运 `update_scripts.bat` 时，必须保留以下相对路径：
+
+```bat
+mkdir D:\my-template\03_Helper_Libraries\compare_hash_ps1 2>nul
+copy /Y "D:\working_file\WorkSpace\scripts\Automated_Script_Summary\02_Template_Management\update_scripts_bat\update_scripts.bat" D:\my-template\update_scripts.bat
+copy /Y "D:\working_file\WorkSpace\scripts\Automated_Script_Summary\03_Helper_Libraries\compare_hash_ps1\compare_hash.ps1" D:\my-template\03_Helper_Libraries\compare_hash_ps1\compare_hash.ps1
+```
+
+然后把项目内 `.scripts\update.bat` 中的 `TEMPLATE_DIR` 改为 `D:\my-template`。
+
+### 移植后验证
+
+```bat
+dir "<TEMPLATE_DIR>\update_scripts.bat"
+dir "<TEMPLATE_DIR>\03_Helper_Libraries\compare_hash_ps1\compare_hash.ps1"
+mkdir C:\sync-smoke\.scripts 2>nul
+cd C:\sync-smoke
+"<TEMPLATE_DIR>\update_scripts.bat"                REM dry-run
+"<TEMPLATE_DIR>\update_scripts.bat" --apply        REM 应用
+dir .scripts                                          REM build.bat / fix_build.bat 等已被同步
+```
+

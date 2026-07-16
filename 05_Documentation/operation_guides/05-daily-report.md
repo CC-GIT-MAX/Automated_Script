@@ -1,4 +1,4 @@
-# 日报：daily_report.bat
+﻿# 日报：daily_report.bat
 
 ## 用途
 
@@ -41,3 +41,41 @@
 - `[SKIP] ... already exists`：使用 `--append` 补充，或确认后使用 `--regen` 重建。
 - 报告目录无法创建：检查 `.scripts` 写权限。
 - 周报缺少内容：确保日报日期落在周报范围内，文件名必须是 `YYYY-MM-DD.md`。
+
+## 依赖文件清单与移植
+
+`daily_report.bat` 是纯批处理脚本，没有 `.ps1` 伴生文件。
+
+### 复制位置与目标
+
+| 仓库内源文件 | 目标项目中的部署路径 |
+|---|---|
+| `02_Template_Management\daily_report_bat\daily_report.bat` | `.scripts\daily_report.bat` |
+| `03_Helper_Libraries\common_bat\common.bat` | `.scripts\lib\common.bat` |
+| `06_Project_Examples\YTM32B1MD1_FlexCAN\project.env.bat` | `.scripts\project.env.bat` |
+
+### 一次性移植命令
+
+```bat
+mkdir .scripts\lib 2>nul
+mkdir .scripts\reports\daily 2>nul
+copy /Y "D:\working_file\WorkSpace\scripts\Automated_Script_Summary\02_Template_Management\daily_report_bat\daily_report.bat" .scripts\daily_report.bat
+copy /Y "D:\working_file\WorkSpace\scripts\Automated_Script_Summary\03_Helper_Libraries\common_bat\common.bat" .scripts\lib\common.bat
+copy /Y "D:\working_file\WorkSpace\scripts\Automated_Script_Summary\06_Project_Examples\YTM32B1MD1_FlexCAN\project.env.bat" .scripts\project.env.bat
+```
+
+### 移植后验证
+
+```bat
+test -f .scripts\daily_report.bat                REM 主入口存在
+test -f .scripts\lib\common.bat                  REM 环境加载器存在
+test -f .scripts\project.env.bat                 REM 配置存在
+.scripts\daily_report                            REM 创建今日日报
+.scripts\daily_report 2026-07-15                 REM 指定日期可写
+.scripts\daily_report --regen                    REM 覆盖标志生效
+.scripts\daily_report --append "smoke-test entry" REM 追加标志生效
+dir .scripts\reports\daily                       REM 输出文件存在
+```
+
+外部工具：PowerShell（用于日期正则校验）。
+

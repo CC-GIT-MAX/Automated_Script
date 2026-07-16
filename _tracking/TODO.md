@@ -59,6 +59,14 @@
   companion PowerShell files, and `exit /b` inside parenthesized blocks.
   -- Owner: TBD, est. 2 hours
 
+
+## P2 -- Nice to have
+
+- [ ] **Audit per-script dependency manifests against `new_project.bat` and `update_scripts.bat`.**
+  After the 2026-07-15 rule addition, every script lists the files it
+  depends on. Walk the manifest tables and confirm `new_project.bat` /
+  `update_scripts.bat` actually copy every file listed; any mismatch is a
+  bug in those scripts (not in the manifest). -- Owner: TBD, est. 1 hour
 ## P2 -- Nice to have
 
 - [ ] **Color-coded output in scripts.**

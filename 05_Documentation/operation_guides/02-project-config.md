@@ -1,4 +1,4 @@
-# 项目参数配置：project.env.bat
+﻿# 项目参数配置：project.env.bat
 
 ## 用途
 
@@ -49,3 +49,32 @@ Test-Path $env:CD\.scripts\project.env.bat
 - `iarbuild.exe not found`：检查 `IAR_BIN`，不要填写 IAR IDE 主程序路径。
 - `Not enough input arguments`：通常缺少 `IAR_CONFIG`。
 - `Configuration ... not found`：打开 IAR 确认实际 Configuration 名称。
+
+## 依赖文件清单与移植
+
+`project.env.bat` 是所有编译和报告脚本的公共配置文件，本身不是一个可执行脚本，但属于被依赖最多的文件。
+
+### 复制位置与目标
+
+| 仓库内源文件 | 目标项目中的部署路径 |
+|---|---|
+| `06_Project_Examples\YTM32B1MD1_FlexCAN\project.env.bat` | `.scripts\project.env.bat` |
+
+### 一次性移植
+
+在已部署好 `lib\common.bat` 的项目中执行：
+
+```bat
+copy /Y "D:\working_file\WorkSpace\scripts\Automated_Script_Summary\06_Project_Examples\YTM32B1MD1_FlexCAN\project.env.bat" .scripts\project.env.bat
+notepad .scripts\project.env.bat
+```
+
+### 移植后验证
+
+```bat
+test -f .scripts\project.env.bat                       REM 文件存在
+type .scripts\project.env.bat | findstr IAR_BIN         REM 至少含 IAR_BIN
+test -f .scripts\lib\common.bat                        REM 调用者存在
+.scripts\build.bat clean                               REM common.bat 可加载此 env
+```
+

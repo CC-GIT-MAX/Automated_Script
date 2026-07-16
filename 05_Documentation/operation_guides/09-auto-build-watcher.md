@@ -1,4 +1,4 @@
-# 保存后自动编译：auto_build_watcher.ps1
+﻿# 保存后自动编译：auto_build_watcher.ps1
 
 ## 用途
 
@@ -38,3 +38,43 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\.scripts\auto_build_watche
 - 一次保存触发多次：编辑器产生多种文件事件；等待去抖完成，避免快速连续保存。
 - 网络盘事件不稳定：建议在本地磁盘使用。
 - 首次启用前不要跳过手动 `build.bat build` 验证。
+
+## 依赖文件清单与移植
+
+`auto_build_watcher.ps1` 自身只是一个文件，但它运行时调用整个自动化栈。
+
+### 复制位置与目标
+
+| 仓库内源文件 | 目标项目中的部署路径 |
+|---|---|
+| `04_File_Watcher\auto_build_watcher_ps1\auto_build_watcher.ps1` | `.scripts\auto_build_watcher.ps1` |
+| `01_Build_Automation\build_bat\build.bat` | `.scripts\build.bat`（被监视器调用） |
+| `01_Build_Automation\fix_build_bat\fix_build.bat` | `.scripts\fix_build.bat`（失败时可选调用） |
+| `03_Helper_Libraries\common_bat\common.bat` | `.scripts\lib\common.bat`（被 build/fix_build 调用） |
+| `06_Project_Examples\YTM32B1MD1_FlexCAN\project.env.bat` | `.scripts\project.env.bat` |
+
+### 一次性移植命令
+
+```bat
+mkdir .scripts\lib 2>nul
+copy /Y "D:\working_file\WorkSpace\scripts\Automated_Script_Summary\04_File_Watcher\auto_build_watcher_ps1\auto_build_watcher.ps1" .scripts\auto_build_watcher.ps1
+copy /Y "D:\working_file\WorkSpace\scripts\Automated_Script_Summary\01_Build_Automation\build_bat\build.bat" .scripts\build.bat
+copy /Y "D:\working_file\WorkSpace\scripts\Automated_Script_Summary\01_Build_Automation\fix_build_bat\fix_build.bat" .scripts\fix_build.bat
+copy /Y "D:\working_file\WorkSpace\scripts\Automated_Script_Summary\03_Helper_Libraries\common_bat\common.bat" .scripts\lib\common.bat
+copy /Y "D:\working_file\WorkSpace\scripts\Automated_Script_Summary\06_Project_Examples\YTM32B1MD1_FlexCAN\project.env.bat" .scripts\project.env.bat
+```
+
+推荐使用 `new_project.bat` 一次性安装全部脚本，再启动监视器。
+
+### 移植后验证
+
+```powershell
+Test-Path .\.scripts\auto_build_watcher.ps1            # 监视器存在
+cmd /c ".\.scripts\build.bat build"                    # 退出 0
+Test-Path .\app; Test-Path .\board; Test-Path .\platform   # 至少有一个默认监视目录
+$PSVersionTable.PSVersion                              # Major >= 5
+powershell -NoProfile -ExecutionPolicy Bypass -File .\.scripts\auto_build_watcher.ps1   # 启动，Ctrl+C 停止
+```
+
+外部工具：PowerShell 5.0+、`codex` CLI（仅在修复提示时使用）、IAR 工具链（经由 `build.bat` 间接调用）。
+

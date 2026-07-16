@@ -1,4 +1,4 @@
-﻿# AGENTS.md -- monthly_report.bat
+# AGENTS.md -- monthly_report.bat
 
 ## What it does
 
@@ -103,3 +103,49 @@ not need to change.
 - Auto-generate trend charts from the Statistics section
 - Add `--no-source` flag to skip the raw-entry append for cleaner sharing
 - Add a project-comparison mode that generates a multi-project monthly roll-up
+## Dependency manifest (transplant this script by copying)
+
+`monthly_report.bat` is a thin wrapper; the real work is done by the companion
+`monthly_report.ps1` in the **same folder**. Both files must travel together.
+
+| Slot | Source in this repo | Runtime path in target project |
+|---|---|---|
+| Entry script | `02_Template_Management/monthly_report_bat/monthly_report.bat` | `<PROJECT_ROOT>\.scripts\monthly_report.bat` |
+| Companion worker (REQUIRED) | `02_Template_Management/monthly_report_bat/monthly_report.ps1` | `<PROJECT_ROOT>\.scripts\monthly_report.ps1` |
+| Env loader (REQUIRED) | `03_Helper_Libraries/common_bat/common.bat` | `<PROJECT_ROOT>\.scripts\lib\common.bat` |
+| Project config (REQUIRED) | `06_Project_Examples/YTM32B1MD1_FlexCAN/project.env.bat` | `<PROJECT_ROOT>\.scripts\project.env.bat` |
+| Input data | `.scripts\reports\daily\*.md` and `.scripts\reports\weekly\*.md` | (produced upstream) |
+
+**External tool dependencies**
+
+| Tool | Version / how to verify | Used for |
+|---|---|---|
+| PowerShell | 5.1+ on Windows | Runs the companion `.ps1` (date math, aggregation) |
+| `codex` CLI | Optional; needed unless `--no-codex` is passed | Synthesizes the monthly summary |
+| `cmd.exe` | Windows default | Script host |
+
+**Transplant command (cmd, run from the new project root)**
+
+```bat
+mkdir .scripts\lib 2>nul
+copy /Y "D:\working_file\WorkSpace\scripts\Automated_Script_Summary\02_Template_Management\monthly_report_bat\monthly_report.bat" .scripts\monthly_report.bat
+copy /Y "D:\working_file\WorkSpace\scripts\Automated_Script_Summary\02_Template_Management\monthly_report_bat\monthly_report.ps1" .scripts\monthly_report.ps1
+copy /Y "D:\working_file\WorkSpace\scripts\Automated_Script_Summary\03_Helper_Libraries\common_bat\common.bat"                  .scripts\lib\common.bat
+copy /Y "D:\working_file\WorkSpace\scripts\Automated_Script_Summary\06_Project_Examples\YTM32B1MD1_FlexCAN\project.env.bat"    .scripts\project.env.bat
+```
+
+## Transplant checklist
+
+```bat
+test -f .scripts\monthly_report.bat  REM wrapper exists
+test -f .scripts\monthly_report.ps1  REM companion exists; same folder as wrapper
+test -f .scripts\lib\common.bat      REM env loader exists
+test -f .scripts\project.env.bat     REM project identity set
+.scripts\monthly_report --no-codex 2026-07             REM month argument works
+.scripts\monthly_report --no-codex --from 2026-07-01 --to 2026-07-31   REM explicit range works
+.scripts\monthly_report --no-codex   REM default range (current month) works
+dir .scripts\reports\monthly         REM output markdown was written
+```
+
+See also: `daily_report.bat`, `weekly_report.bat` + `weekly_report.ps1`
+(upstream data sources), `common.bat` (env loader).

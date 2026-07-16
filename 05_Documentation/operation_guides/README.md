@@ -1,4 +1,4 @@
-# 自动化脚本操作手册
+﻿# 自动化脚本操作手册
 
 本目录是 `Automated_Script_Summary` 的用户操作入口。脚本中心负责保存标准版本；每个实际项目通过 `.scripts\` 使用它们。
 
@@ -49,3 +49,16 @@ cd "D:\working_file\MyProject"
 - 更新脚本前先 dry-run，正式更新默认保留备份。
 - 首次使用报告脚本时先加 `--no-codex` 验证数据采集。
 - 遇到脚本异常先阅读 `_tracking/PITFALLS.md`。
+
+## 依赖文件清单与移植约定
+
+每份指南最后都包含 “依赖文件清单与移植” 小节，列出该脚本需要的仓库内源文件、项目本地文件、外部工具，以及可直接复制使用的移植命令与验证步骤。需要单独搬运某个脚本到另一台机器或项目时，按对应指南的这段说明操作即可，无需克隆整个仓库。
+
+## 一次性搬运整个自动化栈到新机器
+
+```powershell
+Copy-Item -Path "D:\working_file\WorkSpace\scripts\Automated_Script_Summary" `
+          -Destination "<NEW_TEMPLATE_DIR>\" -Recurse -Force
+```
+
+然后在新机器上执行 `new_project.bat`，把整栈部署到目标项目。

@@ -1,4 +1,4 @@
-# Codex IAR Automation Template
+﻿# Codex IAR Automation Template
 
 Portable build + compile-fix automation for IAR Embedded Workbench projects, integrated with OpenAI Codex CLI.
 

@@ -1,4 +1,4 @@
-# AGENTS.md -- Automated Script Summary (ROOT)
+﻿# AGENTS.md -- Automated Script Summary (ROOT)
 
 > This file is the **master** set of rules for all scripts in this repository.
 > Each script subdirectory has its **own** `AGENTS.md` with rules specific to that script.
@@ -106,6 +106,55 @@ into the scripts already -- don''t reintroduce the old patterns.
 - **Always** have a dry-run mode (default) and an `--apply` flag.
 - **Never** delete files that exist in the project but not in the template.
 
+
+### 6. Dependency Packaging (self-contained script bundles)
+
+Every per-script `AGENTS.md` and every entry in `05_Documentation/operation_guides/`
+MUST declare an **explicit dependency manifest** so the script can be transplanted
+into a new project (or a new machine) by **copying the listed files alone**.
+
+A user who only wants to run **one** script should never have to clone the entire
+repository or reverse-engineer the call graph.
+
+**Required manifest fields** (must appear as a single Markdown table or bulleted
+list in every per-script `AGENTS.md`):
+
+| Field | Meaning |
+|---|---|
+| Required files (in repo) | Every other repo file the script reads, calls, or `copy /Y`s -- given with its path relative to the repo root |
+| Required files (project-local) | Every file the script reads from the project it is deployed to (e.g. `.scripts\project.env.bat`) |
+| External tool dependencies | Non-repo binaries the script invokes (`iarbuild.exe`, `codex`, PowerShell version, etc.) |
+| Bundle root (when copying out) | The exact folder layout to reproduce when transplanting -- e.g. `.scripts\build.bat` + `.scripts\lib\common.bat` |
+| Copy-out checklist | The minimum steps to verify after copying (e.g. "run `build.bat build` once and confirm exit 0") |
+
+**Rules:**
+
+- The dependency list MUST be derived from the actual script source (look at
+  every `call`, `powershell -File`, `copy`, `%FILE_*_SRC%` reference).
+  No hypothetical dependencies.
+- The "Bundle root" must reproduce the **on-disk layout** the script expects at
+  runtime, not the source-tree layout in this repo. Example: `weekly_report.bat`
+  lives in `weekly_report_bat/` in the repo, but when deployed its companion
+  `weekly_report.ps1` must sit in the **same** folder, not in `weekly_report_bat/`.
+- When a dependency is itself another script, its own dependency manifest MUST
+  also be satisfied (transitive closure). Document this with a "see also" line.
+- The per-script `AGENTS.md` MUST end with a section titled `## Transplant checklist`
+  listing 3-6 concrete verification commands.
+- The companion Chinese guide in `05_Documentation/operation_guides/` MUST
+  contain a section titled `## 依赖文件清单与移植` with the same table
+  translated to Chinese plus the verbatim `copy` / `xcopy` command that
+  produces the bundle.
+
+**Update triggers** (when to revise the manifest):
+
+- Adding, renaming, or removing a file the script reads/calls.
+- Changing the deployment layout in `new_project.bat` or `update_scripts.bat`.
+- Adding a new external tool dependency (e.g. switching to a different compiler).
+- Adding a new companion script (`.bat` + `.ps1` pair).
+
+The manifest is the **source of truth** for "what must travel with this
+script." If `new_project.bat` or `update_scripts.bat` does not copy a file
+the manifest lists, that is a **bug** in those scripts.
 ## Per-script AGENTS.md convention
 
 Each script directory MUST contain its own `AGENTS.md` with:
